@@ -1,0 +1,138 @@
+\documentclass[12pt]{ctexart}
+\usepackage{geometry}       % 设置页面整体布局
+\geometry{top=2.5cm, bottom=2.5cm, left=2cm, right=2cm}
+\usepackage{fancyhdr}       % 设置页眉页脚布局
+\pagestyle{fancy}
+\rhead{\thepage}            % 设置右页眉为页数
+\chead{中国科学技术大学}
+\cfoot{}                    % 设置中间页脚为空
+\usepackage{amsmath}        % 数学公式宏包
+\numberwithin{equation}{section}
+\usepackage{esint}          % 交叉引用宏包
+\usepackage[colorlinks,     % 设置引用的颜色
+            linkcolor=black,
+            anchorcolor=black,
+            urlcolor=cyan,
+            citecolor=black,
+           ]{hyperref}
+\usepackage{makecell}       % 插入表格宏包
+\usepackage{longtable}      % 长表格宏包
+\usepackage{appendix}       % 生成附录宏包
+\usepackage{graphicx}       % 插入图片宏包
+\usepackage{epstopdf}       % 插入eps图片宏包
+\usepackage{cite}           % 文献引用宏包
+\renewcommand{\thefigure}   % 设置图片编号格式
+    {\thesection{}.\arabic{figure}}
+\renewcommand{\thefootnote}{} % 设置角标编号不出现在文中
+                            % 以\footnotetext{Footnotetext without footnote mark}使用
+\usepackage{unicode-math}
+\usepackage{listings}
+\usepackage{hyperref}
+
+
+
+\CTEXsetup[format={\Large\bfseries}]{section}
+
+\begin{document}
+
+\nocite{*}
+
+\begin{center}
+    \heiti \fontsize{24pt}{0}{非线性方程求根}
+
+    \vspace{12pt}
+
+    \kaishu \fontsize{13.75pt}{0}禤科材
+    
+
+    \footnotetext{\textbf{实验日期：}2023年4月22日}
+    \footnotetext{\textbf{作者简介：}禤科材（2002-），男，学号PB20030874，中国科学技术大学本科在读，专业方向为化学物理}
+    \footnotetext{\textbf{联系方式：}电话 18108064415 ，邮箱 \href{mailto:ustcxkc@mail.ustc.edu.cn}{ustcxkc@mail.ustc.edu.cn}}
+
+    \vspace{5pt}
+
+    \songti \fontsize{12pt}{0}(中国科学技术大学化学与材料科学学院，安徽 合肥 230026)
+\end{center}
+
+
+\section{实验原理}
+
+对于非线性方程求根问题，主要有两种方法：牛顿法与弦截法。
+
+\subsection{牛顿法及其二次收敛性}
+牛顿法的迭代公式为
+\begin{equation}\label{equ:newton}
+    x_{i+1} = x_i - \frac{f(x_i)}{f'(x_i)} 
+\end{equation}
+牛顿法是一个二次收敛的算法，证明如下。将 $f(x)$ 在 $r$ 处泰勒展开到二阶：
+\[
+    f(r) = f(x_i) + (r - x_i) f'(x_i) + \frac{(r - x_i)^2}{2} f''(\xi_i)
+\]
+由于 $r$ 是根，我们有
+\begin{align*}
+    0 &= f(x_i) + (r - x_i) f'(x_i) + \frac{(r - x_i)^2}{2} f''(\xi_i) \\
+    - \frac{f(x_i)}{f'(x_i)}  &= r - x_i + \frac{(r - x_i)^2}{2} \frac{f''(\xi_i)}{f'(x_i)}  
+\end{align*}
+这里假设 $f'(x_i) \neq 0$ 。重新整理则有
+\begin{align*}
+    x_i - - \frac{f(x_i)}{f'(x_i)} - r &= \frac{(r - x_i)^2}{2} \frac{f''(\xi_i)}{f'(x_i)}  \\
+    x_{i+1} - r = e_i^2 \frac{f''(\xi_i)}{2f'(x_i)}  \\
+    e_{i+1} = e_i^2 \left|\frac{f''(\xi_i)}{2f'(x_i)} \right| 
+\end{align*}
+所以牛顿法是二次收敛的。
+
+\subsection{弦截法的超线性收敛}
+弦截法的迭代公式为
+\begin{equation}\label{equ:secant}
+    x_{i+1} = x_i - \frac{f(x_i)(x_i - x_{i-1})}{f(x_i) - f(x_{i-1})} 
+\end{equation}
+弦截法的收敛阶为 $1.618$ ，稍慢于牛顿法，证明如下。代数整理并舍弃高阶项，易得
+\[
+    e_{i+1} = \left|\frac{f''(\xi_i)}{2f'(x_i)} \right| e_ie_{i-1}
+\]
+假设它的收敛阶为 $\alpha$ ，则
+\[
+    e_{i+1} = \left|\frac{f''(\xi_i)}{2f'(x_i)} \right|^{\alpha -1} e_i^\alpha 
+\]
+再取极限，解得
+\[
+    \alpha = \frac{1 + \sqrt{5}}{2} 
+\]
+证明完毕。
+
+\section{实验方法}
+使用 jupyter notebook 编程求解。
+
+\section{实验结果}
+对于函数
+\[
+    f(x) = \frac{x^3}{3} - x
+\]
+分别按照题目要求使用不同的初值求解，结果如下：
+
+
+\begin{longtable}{ccc}
+    \caption{牛顿法} \\
+        \hline
+        初值 & 根 & 步数 \\
+        \hline
+        $0.1$ & $0.0$ & $2$\\
+         $0.2$ & $0.0$ 	&  $3$\\
+	    $0.9$ &  $-1.7320508075688774$ &  $6$\\
+	    $9.0$ &  $1.7320508075688774 $&  $9$
+\end{longtable}
+
+\begin{longtable}{ccc}
+    \caption{弦截法} \\
+        \hline
+        初值 & 根 & 步数 \\
+        \hline
+        $[-0.1, 0.1]$ 	&  $0.0$ 	&  $1$ \\
+	    $[-0.2, 0.2]$ 	&  $0.0$ 	&  $1$ \\
+	    $[-2.0, 0.9]$ 	&  $1.7320508075688772 $ 	&  $11$ \\
+	    $[0.9, 9.0]$ 	&  $1.7320508075688772 $ 	&  $13$
+\end{longtable}
+
+经过对比，牛顿法如果在非常靠近根的初始值开始，它所需要的收敛步数将大于弦截法；而在初始值不那么靠近根的情况下，牛顿法的迭代步数将会小于弦截法。
+
+\end{document}
